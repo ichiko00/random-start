@@ -2,3 +2,6 @@
 #random-start-panel .rs-status { white-space:pre-wrap; font-size:0.9em; margin:8px 0; }
 #random-start-panel button { margin:4px; }
 #random-start-panel .rs-result { min-height:300px; }
+
+#random-start-panel .rs-ready { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+#random-start-panel .rs-library[hidden] { display:none; }
