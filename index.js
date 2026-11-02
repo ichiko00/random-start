@@ -10,6 +10,11 @@ let startButton;
 let retryButton;
 let libraryButton;
 let savingLibrary = false;
+let spinner;
+function updateSpinner() {
+    if (spinner) spinner.hidden = !(busy || savingLibrary);
+    if (status) status.setAttribute?.("aria-busy", String(busy || savingLibrary));
+}
 
 export function pick(items) {
     if (!items.length) throw new Error('没有可抽取的项目');
@@ -57,6 +62,7 @@ async function addToLibrary() {
     const description = result.value.trim();
     if (!data?.persona || !description) { toastr.error('当前没有可保存的 User 设定'); return; }
     savingLibrary = true;
+    updateSpinner();
     libraryButton.disabled = true;
     try {
         const power = c.powerUserSettings;
@@ -99,6 +105,7 @@ async function addToLibrary() {
         toastr.error(e.message, '加入 User 库失败');
     } finally {
         savingLibrary = false;
+        updateSpinner();
         libraryButton.disabled = busy;
     }
 }
@@ -134,6 +141,7 @@ async function generatePersona() {
 async function run(fresh) {
     if (busy || savingLibrary || isGenerating()) { toastr.info('请等待当前生成结束'); return; }
     busy = true;
+    updateSpinner();
     startButton.disabled = retryButton.disabled = true;
     try {
         if (fresh) {
@@ -174,6 +182,7 @@ async function run(fresh) {
         toastr.error(error.message, '随机开局');
     } finally {
         busy = false;
+        updateSpinner();
         startButton.disabled = retryButton.disabled = false;
         sync();
     }
@@ -185,9 +194,10 @@ async function init() {
     const panel = document.createElement('div');
     panel.id = 'random-start-panel';
     panel.className = 'extension_container';
-    panel.innerHTML = `<div class="inline-drawer"><div class="inline-drawer-toggle inline-drawer-header"><b>🎲 随机开局 · User 设定</b><div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div></div><div class="inline-drawer-content"><p>随机角色卡 → 随机开场 → 当前 API 生成聊天专属 User 设定。每次建立新聊天。</p><button class="menu_button rs-start">🎲 一键随机开局</button><button class="menu_button rs-retry">重试生成</button><div class="rs-ready"><div class="rs-status" role="status"></div><button class="menu_button rs-library" hidden>加入 User 库</button></div><label>User 设定模板<textarea class="text_pole rs-template"></textarea></label><details><summary>查看 / 修改当前聊天设定</summary><textarea class="text_pole rs-result"></textarea><button class="menu_button rs-save">保存到当前聊天</button></details></div></div>`;
+    panel.innerHTML = `<div class="inline-drawer"><div class="inline-drawer-toggle inline-drawer-header"><b>🎲 随机开局 · User 设定</b><div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div></div><div class="inline-drawer-content"><p>随机角色卡 → 随机开场 → 当前 API 生成聊天专属 User 设定。每次建立新聊天。</p><button class="menu_button rs-start">🎲 一键随机开局</button><button class="menu_button rs-retry">重试生成</button><div class="rs-ready"><span class="rs-spinner" hidden aria-hidden="true"></span><div class="rs-status" role="status"></div><button class="menu_button rs-library" hidden>加入 User 库</button></div><label>User 设定模板<textarea class="text_pole rs-template"></textarea></label><details><summary>查看 / 修改当前聊天设定</summary><textarea class="text_pole rs-result"></textarea><button class="menu_button rs-save">保存到当前聊天</button></details></div></div>`;
     (document.querySelector('#extensions_settings2') ?? document.querySelector('#extensions_settings')).append(panel);
     status = panel.querySelector('.rs-status');
+    spinner = panel.querySelector('.rs-spinner');
     template = panel.querySelector('.rs-template');
     result = panel.querySelector('.rs-result');
     startButton = panel.querySelector('.rs-start');
