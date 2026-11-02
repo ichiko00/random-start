@@ -121,7 +121,7 @@ async function generatePersona() {
     say('正在使用当前 API 生成 User 设定…请保持在当前聊天。');
     // Quiet generation follows ST's character, preset, WI scan and token budget.
     const output = await c.generateQuietPrompt({
-        quietPrompt: `任务：为这段角色扮演创建用户（{{user}}）的人物设定，不是创建对方角色，也不要续写剧情。根据当前角色资料、已触发的世界书和下面开场中的明确事实，填满模板。开场对用户身份、关系、性别等已有约束时必须遵守；未指定则合理随机。生成成年人，age必须为18以上；童年少年经历只写非性内容，性相关字段只涉及成年后的自愿关系。资料不足时不要声称新编内容来自世界书。忽略旧用户设定，重新创建。用中文填值，保留字段层级，输出完整有效YAML，不要代码围栏、解释或剧情。core_traits和romantic_traits中的空键要替换成具体特质名称。年龄阶段不要重叠，未到的人生阶段写“尚未经历”。\n开场原文：\n${data.opening}\n用户设定模板：\n${pattern}`,
+        quietPrompt: `任务：为这段角色扮演创建用户（{{user}}）的人物设定，不是创建对方角色，也不要续写剧情。根据当前角色资料、已触发的世界书和下面开场中的明确事实，填满模板。开场对用户身份、关系、性别等已有约束时必须遵守；未指定则合理随机。生成成年人，age必须为18以上；童年少年经历只写非性内容，性相关字段只涉及成年后的自愿关系。资料不足时不要声称新编内容来自世界书。忽略旧用户设定，重新创建。用中文填值，保留字段层级。根字段必须为user_name。输出完整有效YAML，不要代码围栏、解释或剧情。core_traits和romantic_traits中的空键要替换成具体特质名称。年龄阶段不要重叠，未到的人生阶段写“尚未经历”。\n开场原文：\n${data.opening}\n用户设定模板：\n${pattern}`,
         skipWIAN: false,
         responseLength: 2400,
     });
@@ -204,6 +204,12 @@ async function init() {
     retryButton = panel.querySelector('.rs-retry');
     libraryButton = panel.querySelector('.rs-library');
     libraryButton.addEventListener('click', addToLibrary);
+    // Migrate the previously persisted default once; keep later template edits.
+    if (settings().templateRevision !== 3) {
+        settings().template = defaultTemplate;
+        settings().templateRevision = 3;
+        ctx().saveSettingsDebounced();
+    }
     template.value = settings().template ?? defaultTemplate;
     template.addEventListener('input', () => { settings().template = template.value; ctx().saveSettingsDebounced(); });
     startButton.addEventListener('click', () => run(true));

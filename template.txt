@@ -7,13 +7,15 @@ user_name:
   identity:
     -
   background_story:
-    童年(0-n岁):
+    童年(0-x岁):
     少年(x-y岁):
     青年(x-y岁):
-    中年(可选):
+    中年(x岁+）（如果有的话）:
     现状:
+
   social_status:
-    -
+    - 
+
   appearance:
     hair:
     eyes:
@@ -26,34 +28,43 @@ user_name:
     business_casual:
     casual_wear:
     home_wear:
-  archetype:
+
+  archetype: 
+
   personality:
     core_traits:
       - : ""
     romantic_traits:
       - : ""
+
   lifestyle_behaviors:
     -
-    -
+    - 
+
   work_behaviors:
-    -
+    - 
+
   emotional_behaviors:
     angry:
-    happy:
-  goals（短期+长期）:
-    -
+    happy: 
+
+  goals:
+    - 
+
   weakness:
-    -
-  secrets:
-    -
+    - 
+
   likes:
-    -
+    - 
+
   dislikes:
-    -
+    - 
+
   skills:
     - 工作: ["",""]
     - 生活: ["",""]
     - 爱好: ["",""]
+
   NSFW_information:
     Sex_related traits:
       experiences:
